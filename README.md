@@ -1,2 +1,3 @@
-#Elden Ring Nightreign. Best shields for birb
+# Elden Ring Nightreign. Best shields for birb
+
 WIP
