@@ -24,9 +24,9 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = function WelcomeScreen(_pro
   const { navigation } = _props
   const { logout } = useAuth()
 
-  function goNext() {
-    navigation.navigate("Demo", { screen: "DemoShowroom", params: {} })
-  }
+  // function goNext() {
+  //   navigation.navigate("Demo", { screen: "DemoShowroom", params: {} })
+  // }
 
   useHeader(
     {
@@ -64,7 +64,7 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = function WelcomeScreen(_pro
           testID="next-screen-button"
           preset="reversed"
           tx="welcomeScreen:letsGo"
-          onPress={goNext}
+          // onPress={goNext}
         />
       </View>
     </Screen>
