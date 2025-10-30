@@ -17,13 +17,11 @@ import { useAppTheme } from "@/theme/context"
 import { $styles } from "@/theme/styles"
 import type { ThemedStyle } from "@/theme/types"
 import { useSafeAreaInsetsStyle } from "@/utils/useSafeAreaInsetsStyle"
-import Carousel, { TAnimationStyle } from "react-native-reanimated-carousel"
+import Carousel, { ICarouselInstance, TAnimationStyle } from "react-native-reanimated-carousel"
 import { interpolate } from "react-native-reanimated"
 import { Pressable, TouchableWithoutFeedback } from "react-native-gesture-handler"
 import { SlideItem } from "@/components/SlideItem"
-
-const welcomeLogo = require("@assets/images/logo.png")
-const welcomeFace = require("@assets/images/welcome-face.png")
+import GameItemsScreen from "@/components/ShieldCard"
 
 const BOSSES = [
   {
@@ -59,21 +57,13 @@ const BOSSES = [
     src: "@assets/images/bosses/ERN_Icon_Target_Night_Aspect.webp",
   },
 ]
-// const tricephalos = require("@assets/images/bosses/ERN_Icon_Target_Tricephalos.webp")
-// const gaping_jaw = require("@assets/images/bosses/ERN_Icon_Target_Gaping_Jaw.webp")
-// const sentient_pest = require("@assets/images/bosses/ERN_Icon_Target_Sentient_Pest.webp")
-// const augur = require("@assets/images/bosses/ERN_Icon_Target_Augur.webp")
-// const equilibrious_beast = require("@assets/images/bosses/ERN_Icon_Target_Equilibrious_Beast.webp")
-// const darkdrift_knight = require("@assets/images/bosses/ERN_Icon_Target_Darkdrift_Knight.webp")
-// const fissure_in_the_fog = require("@assets/images/bosses/ERN_Icon_Target_Fissure_in_the_Fog.webp")
-// const night_aspect = require("@assets/images/bosses/ERN_Icon_Target_Night_Aspect.webp")
 
 export const WelcomeScreen: FC = function WelcomeScreen() {
   const { themed, theme } = useAppTheme()
 
   const { height, width } = useWindowDimensions()
 
-  // const $bottomContainerInsets = useSafeAreaInsetsStyle(["bottom"])
+  // console.log(width)
   const itemSize = 80
   const centerOffset = width / 2 - itemSize / 2
 
@@ -102,12 +92,52 @@ export const WelcomeScreen: FC = function WelcomeScreen() {
         ],
       }
     },
-    [centerOffset],
+    [centerOffset, itemSize],
   )
+
+  const carouselRef = React.useRef<ICarouselInstance>(null)
+  const [currentIndex, setCurrentIndex] = React.useState(0)
+
+  const navigateToIndex = React.useCallback(
+    (targetIndex: number) => {
+      if (carouselRef.current) {
+        const totalItems = BOSSES.length
+        const current = currentIndex
+
+        // Calculate the shortest path in the loop
+        const forwardDistance = (targetIndex - current + totalItems) % totalItems
+        const backwardDistance = (current - targetIndex + totalItems) % totalItems
+
+        // Choose the shorter path
+        const shouldGoForward = forwardDistance <= backwardDistance
+
+        if (shouldGoForward) {
+          carouselRef.current.next({ animated: true, count: forwardDistance })
+        } else {
+          carouselRef.current.prev({ animated: true, count: backwardDistance })
+        }
+
+        setCurrentIndex(targetIndex)
+      }
+    },
+    [currentIndex],
+  )
+
+  const ShieldView = () => {
+    return (
+      <View style={themed($topContainer)}>
+        {/* <Text>Boss1 text</Text> */}
+        <GameItemsScreen key={1}></GameItemsScreen>
+      </View>
+    )
+  }
 
   return (
     <Screen preset="fixed" contentContainerStyle={$styles.flex1}>
+      {/* TODO place view here with shield values */}
+      <ShieldView></ShieldView>
       <Carousel
+        ref={carouselRef}
         width={itemSize}
         height={itemSize}
         style={{
@@ -116,11 +146,14 @@ export const WelcomeScreen: FC = function WelcomeScreen() {
         }}
         loop
         data={BOSSES}
+        defaultIndex={0}
+        onSnapToItem={(index) => setCurrentIndex(index)}
         renderItem={({ index }) => (
           <Pressable
             key={index}
             onPress={() => {
-              console.log(index)
+              console.log(`Clicked index: ${index}`)
+              navigateToIndex(index)
             }}
             // containerStyle={{ flex: 1 }}
             style={{ flex: 1 }}
@@ -143,32 +176,17 @@ export const WelcomeScreen: FC = function WelcomeScreen() {
         )}
         customAnimation={animationStyle}
       />
-      {/* <SafeAreaView>
-        <ScrollView style={themed($topContainer)}>
-          <Image source={tricephalos} resizeMode="contain" />
-          <Image source={gaping_jaw} resizeMode="contain" />
-          <Image source={sentient_pest} resizeMode="contain" />
-          <Image source={augur} resizeMode="contain" />
-          <Image source={equilibrious_beast} resizeMode="contain" />
-          <Image source={darkdrift_knight} resizeMode="contain" />
-          <Image source={fissure_in_the_fog} resizeMode="contain" />
-          <Image source={night_aspect} resizeMode="contain" />
-        </ScrollView>
-      </SafeAreaView> */}
-
-      {/* <View style={themed([$bottomContainer, $bottomContainerInsets])}>
-        <Text tx="welcomeScreen:postscript" size="md" />
-      </View> */}
     </Screen>
   )
 }
 
 const $topContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   flexShrink: 1,
-  flexGrow: 1,
-  // flexBasis: "57%",
-  // justifyContent: "center",
-  paddingHorizontal: spacing.lg,
+  // flexGrow: 1,
+  flexBasis: "70%",
+  justifyContent: "center",
+  // paddingTop: spacing.lg,
+  // paddingHorizontal: spacing.lg,
 })
 
 const $bottomContainer: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
