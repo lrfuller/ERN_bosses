@@ -81,55 +81,53 @@ const ShieldCard: React.FC<ShieldCardProps> = ({ item }) => {
 
   return (
     <View style={styles.card}>
+      <View style={styles.title}>
+        <Text style={styles.itemName}>{item.name}</Text>
+      </View>
       <View style={styles.header}>
         <View style={styles.iconContainer}>
           <Image source={item.image} style={styles.itemImage} resizeMode="contain" />
         </View>
-        <Text style={styles.itemName}>{item.name}</Text>
+
+        <View style={styles.resistancesContainer}>
+          <View style={styles.resistanceRow}>
+            <View style={styles.resistance}>
+              <Image source={lightning} style={styles.resistanceImage} resizeMode="contain" />
+              <Text style={[styles.resistanceValue, { color: getResistanceColor(item.lightning) }]}>
+                {item.lightning}%
+              </Text>
+            </View>
+
+            <View style={styles.resistance}>
+              <Image source={fire} style={styles.resistanceImage} resizeMode="contain" />
+              <Text style={[styles.resistanceValue, { color: getResistanceColor(item.fire) }]}>
+                {item.fire}%
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.resistanceRow}>
+            <View style={styles.resistance}>
+              <Image source={magic} style={styles.resistanceImage} resizeMode="contain" />
+              <Text style={[styles.resistanceValue, { color: getResistanceColor(item.magic) }]}>
+                {item.magic}%
+              </Text>
+            </View>
+
+            <View style={styles.resistance}>
+              <Image source={holy} style={styles.resistanceImage} resizeMode="contain" />
+              <Text style={[styles.resistanceValue, { color: getResistanceColor(item.holy) }]}>
+                {item.holy}%
+              </Text>
+            </View>
+          </View>
+        </View>
+
         <View style={styles.guardBadge}>
+          {/* <Text style={styles.guardLabel}>Guard</Text> */}
           <Shield size={40} color={"gray"}>
             <Text style={styles.guardValue}>{item.guard}</Text>
           </Shield>
-        </View>
-      </View>
-
-      <View style={styles.resistancesContainer}>
-        <View style={styles.resistanceRow}>
-          <View style={styles.resistance}>
-            {/* <Text style={styles.resistanceIcon}>⚡</Text> */}
-            {/* <Zap size={16} color="#eab308" /> */}
-            <Image source={lightning} style={styles.resistanceImage} resizeMode="contain" />
-            <Text style={styles.resistanceLabel}>Lightning</Text>
-            <Text style={[styles.resistanceValue, { color: getResistanceColor(item.lightning) }]}>
-              {item.lightning}%
-            </Text>
-          </View>
-
-          <View style={styles.resistance}>
-            <Image source={fire} style={styles.resistanceImage} resizeMode="contain" />
-            <Text style={styles.resistanceLabel}>Fire</Text>
-            <Text style={[styles.resistanceValue, { color: getResistanceColor(item.fire) }]}>
-              {item.fire}%
-            </Text>
-          </View>
-        </View>
-
-        <View style={styles.resistanceRow}>
-          <View style={styles.resistance}>
-            <Image source={magic} style={styles.resistanceImage} resizeMode="contain" />
-            <Text style={styles.resistanceLabel}>Magic</Text>
-            <Text style={[styles.resistanceValue, { color: getResistanceColor(item.magic) }]}>
-              {item.magic}%
-            </Text>
-          </View>
-
-          <View style={styles.resistance}>
-            <Image source={holy} style={styles.resistanceImage} resizeMode="contain" />
-            <Text style={styles.resistanceLabel}>Holy</Text>
-            <Text style={[styles.resistanceValue, { color: getResistanceColor(item.holy) }]}>
-              {item.holy}%
-            </Text>
-          </View>
         </View>
       </View>
     </View>
@@ -454,6 +452,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   title: {
+    textAlign: "center",
     fontSize: 32,
     fontWeight: "bold",
     color: "#ffffff",
@@ -470,8 +469,9 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: "#16213e",
     borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
+    padding: 10,
+    paddingBottom: 0,
+    marginBottom: 10,
     borderWidth: 1,
     borderColor: "#2d3748",
   },
@@ -481,13 +481,13 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   iconContainer: {
-    width: 64,
-    height: 64,
+    width: 70,
+    height: 70,
     backgroundColor: "#0f3460",
     borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 12,
+    marginRight: 6,
     padding: 8,
   },
   itemImage: {
@@ -495,15 +495,20 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   itemName: {
+    textAlign: "center",
     fontSize: 18,
     fontWeight: "600",
     color: "#ffffff",
     flex: 1,
   },
-
+  guardLabel: {
+    fontSize: 10,
+    color: "#94a3b8",
+    marginBottom: 2,
+  },
   guardBadge: {
     // backgroundColor: "#0f3460",
-    paddingHorizontal: 12,
+    paddingHorizontal: 6,
     paddingVertical: 8,
     borderRadius: 6,
     alignItems: "center",
@@ -522,20 +527,26 @@ const styles = StyleSheet.create({
     height: 20,
   },
   resistancesContainer: {
-    gap: 12,
+    // width: "60%",
+    flex: 1,
+    // height: "100%",
+    gap: 6,
   },
   resistanceRow: {
     flexDirection: "row",
-    gap: 12,
+    height: 30,
+    gap: 6,
   },
   resistance: {
     flex: 1,
     backgroundColor: "#0f3460",
-    padding: 12,
+    paddingLeft: 12,
+    paddingRight: 12,
     borderRadius: 8,
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
+    height: "100%",
   },
   resistanceIcon: {
     fontSize: 14,
