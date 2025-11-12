@@ -1,21 +1,8 @@
-// // TODO this will ocupy the top portion of the welcome screen.
-
-// // TODO 2, once layout is good, handle placing the shields in different tiers for each boss.
-
-// interface Props {
-//     bossName: string
-
-// }
-
-// export const ShieldCard: React.FC<Props> = (props)=>{
-//     return(
-//         // TODO
-//     )
-// }
-
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { View, Text, ScrollView, StyleSheet, Image } from "react-native"
 import { Shield } from "lucide-react-native"
+import { FlashList } from "@shopify/flash-list"
+import { bossTypes } from "types/bossTypes"
 
 // Affinities
 const magic = require("../../assets/images/affinities/magic.webp")
@@ -134,7 +121,11 @@ const ShieldCard: React.FC<ShieldCardProps> = ({ item }) => {
   )
 }
 
-const GameItemsScreen: React.FC = () => {
+interface GameScreenProps {
+  bossInfo: bossTypes
+}
+
+const GameItemsScreen: React.FC<GameScreenProps> = ({ bossInfo }) => {
   const items: ItemData[] = [
     {
       id: 1,
@@ -429,13 +420,37 @@ const GameItemsScreen: React.FC = () => {
     // },
   ]
 
+  const [sortedItems, setSortedItems] = useState(items)
+
+  useEffect(() => {
+    let newList = sortedItems
+
+    // modify ascending later?...
+    const ascending = true
+
+    newList.sort((a, b) => {
+      const valueA = a[bossInfo.damageTypes]
+      const valueB = b[bossInfo.damageTypes]
+
+      if (valueA > valueB) return ascending ? -1 : 1
+      if (valueA < valueB) return ascending ? 1 : -1
+      return 0
+    })
+
+    setSortedItems(newList)
+  }, [bossInfo.id])
+
   return (
     <View style={styles.container}>
       <View></View>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {items.map((item) => (
+        {/* {sortedItems.map((item) => (
           <ShieldCard key={item.id} item={item} />
-        ))}
+        ))} */}
+        <FlashList
+          data={sortedItems}
+          renderItem={({ item }) => <ShieldCard key={item.id} item={item} />}
+        />
       </ScrollView>
     </View>
   )

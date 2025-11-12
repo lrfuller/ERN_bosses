@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import React, { FC, useEffect } from "react"
 import {
   Image,
   ImageStyle,
@@ -22,39 +22,56 @@ import { interpolate } from "react-native-reanimated"
 import { Pressable, TouchableWithoutFeedback } from "react-native-gesture-handler"
 import { SlideItem } from "@/components/SlideItem"
 import GameItemsScreen from "@/components/ShieldCard"
+import { bossTypes } from "types/bossTypes"
 
-const BOSSES = [
+const BOSSES: bossTypes[] = [
   {
+    id: 0,
     name: "tricephalos",
     src: "@assets/images/bosses/ERN_Icon_Target_Tricephalos.webp",
+    damageTypes: "fire",
   },
   {
+    id: 1,
     name: "gaping_jaw",
     src: "@assets/images/bosses/ERN_Icon_Target_Gaping_Jaw.webp",
+    damageTypes: "lightning",
   },
   {
+    id: 2,
     name: "sentient_pest",
     src: "@assets/images/bosses/ERN_Icon_Target_Sentient_Pest.webp",
+    damageTypes: "magic",
   },
   {
+    id: 3,
     name: "augur",
     src: "@assets/images/bosses/ERN_Icon_Target_Augur.webp",
+    damageTypes: "magic",
   },
   {
+    id: 4,
     name: "equilibrious_beast",
     src: "@assets/images/bosses/ERN_Icon_Target_Equilibrious_Beast.webp",
+    damageTypes: "holy",
   },
   {
+    id: 5,
     name: "darkdrift_knight",
     src: "@assets/images/bosses/ERN_Icon_Target_Darkdrift_Knight.webp",
+    damageTypes: "holy",
   },
   {
+    id: 6,
     name: "fissure_in_the_fog",
     src: "@assets/images/bosses/ERN_Icon_Target_Fissure_in_the_Fog.webp",
+    damageTypes: "magic",
   },
   {
+    id: 7,
     name: "night_aspect",
     src: "@assets/images/bosses/ERN_Icon_Target_Night_Aspect.webp",
+    damageTypes: "magic",
   },
 ]
 
@@ -127,7 +144,7 @@ export const WelcomeScreen: FC = function WelcomeScreen() {
     return (
       <View style={themed($topContainer)}>
         {/* <Text>Boss1 text</Text> */}
-        <GameItemsScreen key={1}></GameItemsScreen>
+        <GameItemsScreen bossInfo={BOSSES[currentIndex]} />
       </View>
     )
   }
@@ -135,7 +152,7 @@ export const WelcomeScreen: FC = function WelcomeScreen() {
   return (
     <Screen preset="fixed" contentContainerStyle={$styles.flex1}>
       {/* TODO place view here with shield values */}
-      <ShieldView></ShieldView>
+      <ShieldView />
       <Carousel
         ref={carouselRef}
         width={itemSize}
