@@ -250,27 +250,39 @@ const $labelStyle: ThemedStyle<TextStyle> = ({ spacing }) => ({
   marginBottom: spacing.xs,
 })
 
-const $inputWrapperStyle: ThemedStyle<ViewStyle> = ({ colors }) => ({
-  alignItems: "flex-start",
-  borderWidth: 1,
-  borderRadius: 4,
-  backgroundColor: colors.palette.neutral200,
-  borderColor: colors.palette.neutral400,
+const $inputWrapperStyle: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
+  alignItems: "center",
+  justifyContent: "center",
+  backgroundColor: colors.background,
+  borderWidth: 2,
+  borderColor: colors.border,
+  borderRadius: 12,
+  paddingHorizontal: spacing.md,
+  paddingVertical: spacing.sm + 2,
+  minHeight: 48,
+  shadowColor: "#000",
+  shadowOffset: {
+    width: 0,
+    height: 1,
+  },
+  shadowOpacity: 0.05,
+  shadowRadius: 2,
+  elevation: 2,
   overflow: "hidden",
 })
 
-const $inputStyle: ThemedStyle<TextStyle> = ({ colors, typography, spacing }) => ({
+const $inputStyle: ThemedStyle<TextStyle> = ({ colors, typography }) => ({
   flex: 1,
   alignSelf: "stretch",
   fontFamily: typography.primary.normal,
   color: colors.text,
   fontSize: 16,
-  height: 24,
+  fontWeight: "500",
   // https://github.com/facebook/react-native/issues/21720#issuecomment-532642093
   paddingVertical: 0,
   paddingHorizontal: 0,
-  marginVertical: spacing.xs,
-  marginHorizontal: spacing.sm,
+  marginVertical: 0,
+  marginHorizontal: 0,
 })
 
 const $helperStyle: ThemedStyle<TextStyle> = ({ spacing }) => ({

@@ -9,7 +9,7 @@ export const BOSS_IMAGES = [
   require("@assets/images/bosses/ERN_Icon_Target_Night_Aspect.webp"),
 ]
 
-// Affinity images matching the order of BOSSES array (fire, lightning, magic, holy)
+// Affinity images matching the order of BossAffinities array (fire, lightning, magic, holy)
 export const AFFINITY_IMAGES = [
   require("@assets/images/affinities/fire.webp"),
   require("@assets/images/affinities/lightning.webp"),

@@ -8,7 +8,7 @@ export interface bossTypes {
   //   damageTypes: elementalDamage[] | elementalDamage
 }
 
-export const BOSSES: bossTypes[] = [
+export const BossAffinities: bossTypes[] = [
   {
     id: 0,
     src: "@assets/images/affinities/fire.webp",
@@ -31,7 +31,7 @@ export const BOSSES: bossTypes[] = [
   },
 ]
 
-export const BOSSES_OLD: bossTypes[] = [
+export const BossAffinities_OLD: bossTypes[] = [
   {
     id: 0,
     name: "tricephalos",

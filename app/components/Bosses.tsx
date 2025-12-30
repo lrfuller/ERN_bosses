@@ -9,14 +9,14 @@ import { SlideItem } from "./SlideItem"
 interface BossesCaourselProps {
   width: number
   currentIndex: number
-  BOSSES: bossTypes[]
+  BossAffinities: bossTypes[]
   setCurrentIndex: any
 }
 
 const BossesCaoursel: React.FC<BossesCaourselProps> = ({
   width,
   currentIndex,
-  BOSSES,
+  BossAffinities,
   setCurrentIndex,
 }) => {
   const itemSize = 80
@@ -55,7 +55,7 @@ const BossesCaoursel: React.FC<BossesCaourselProps> = ({
   const navigateToIndex = React.useCallback(
     (targetIndex: number) => {
       if (carouselRef.current) {
-        const totalItems = BOSSES.length
+        const totalItems = BossAffinities.length
         const current = currentIndex
 
         // Calculate the shortest path in the loop
@@ -86,7 +86,7 @@ const BossesCaoursel: React.FC<BossesCaourselProps> = ({
         height: width / 2,
       }}
       loop
-      data={BOSSES}
+      data={BossAffinities}
       defaultIndex={0}
       onSnapToItem={(index) => setCurrentIndex(index)}
       renderItem={({ index }) => (
