@@ -5,7 +5,7 @@
   "version": "1.0.0",
   "orientation": "portrait",
   "userInterfaceStyle": "automatic",
-  "icon": "./assets/images/ERN_app_logo.png",
+  "icon": "./assets/images/ERN_app_icon_512x512.png",
   "updates": {
     "fallbackToCacheTimeout": 0
   },
@@ -15,10 +15,10 @@
     "**/*"
   ],
   "android": {
-    "icon": "./assets/images/ERN_app_logo.png",
+    "icon": "./assets/images/ERN_app_icon_512x512.png",
     "package": "com.ernbosses",
     "adaptiveIcon": {
-      "foregroundImage": "./assets/images/ERN_app_logo.png",
+      "foregroundImage": "./assets/images/ERN_app_icon_512x512.png",
       "backgroundImage": "./assets/images/app-icon-android-adaptive-background.png"
     },
     "allowBackup": false,
@@ -30,7 +30,7 @@
     "bundleIdentifier": "com.ernbosses"
   },
   "web": {
-    "favicon": "./assets/images/ERN_app_logo.png",
+    "favicon": "./assets/images/ERN_app_icon_512x512.png",
     "bundler": "metro"
   },
   "plugins": [
@@ -39,7 +39,7 @@
     [
       "expo-splash-screen",
       {
-        "image": "./assets/images/ERN_app_logo.png",
+        "image": "./assets/images/ERN_app_icon_512x512.png",
         "imageWidth": 300,
         "resizeMode": "contain",
         "backgroundColor": "#191015"
