@@ -36,6 +36,8 @@ const palette = {
 
   cardBackground: "#16213e",
   cardBackground2: "#0f3460",
+
+  guard: "#94a3b8",
 } as const
 
 export const colors = {

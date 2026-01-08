@@ -34,8 +34,10 @@ const palette = {
   overlay20: "rgba(25, 16, 21, 0.2)",
   overlay50: "rgba(25, 16, 21, 0.5)",
 
-  cardBackground: "#16213e",
-  cardBackground2: "#0f3460",
+  cardBackground: "#334155",   // Slate gray-blue
+  cardBackground2: "#1e293b",
+
+  guard: "#FFFFFF",
 } as const
 
 export const colors = {

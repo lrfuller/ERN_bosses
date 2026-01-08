@@ -190,7 +190,8 @@ const $optionText: ThemedStyle<TextStyle> = ({ colors }) => ({
 })
 
 const $optionTextSelected: ThemedStyle<TextStyle> = ({ colors }) => ({
-  color: colors.palette.primary600,
+  // color: colors.palette.primary600,
+  color: "#FFFFFF",
   fontWeight: "600",
 })
 
