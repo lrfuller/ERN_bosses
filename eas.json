@@ -32,7 +32,11 @@
       "extends": "preview",
       "ios": { "simulator": false }
     },
-    "production": {}
+    "production": {
+      "env": {
+        "SKIP_DEV_NETWORK_CONFIG": "true"
+      }
+    }
   },
   "submit": {
     "production": {}

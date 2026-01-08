@@ -13,11 +13,33 @@ import { storage } from "@/utils/storage"
 
 import { Reactotron } from "./ReactotronClient"
 
+// For Android emulator, use 10.0.2.2 to connect to host machine's localhost
+// For physical devices, use your computer's local IP address
+// For iOS simulator, localhost works fine
+// If Reactotron desktop isn't running, the connection will fail silently
+const getReactotronHost = () => {
+  if (Platform.OS === "android") {
+    // Use 10.0.2.2 for Android emulator (maps to host machine's localhost)
+    // For physical devices, you may need to use your computer's IP address
+    // You can set REACTOTRON_HOST environment variable to override
+    return process.env.REACTOTRON_HOST || "10.0.2.2"
+  }
+  // iOS simulator and other platforms use localhost
+  return process.env.REACTOTRON_HOST || "localhost"
+}
+
 const reactotron = Reactotron.configure({
   name: require("../../package.json").name,
+  host: getReactotronHost(),
+  // Don't fail if Reactotron desktop isn't running
+  safeRecursion: true,
   onConnect: () => {
     /** since this file gets hot reloaded, let's clear the past logs every time we connect */
     Reactotron.clear()
+  },
+  // Handle connection errors gracefully
+  onDisconnect: () => {
+    // Silently handle disconnections
   },
 })
 
@@ -135,5 +157,7 @@ declare global {
 
 /**
  * Now that we've setup all our Reactotron configuration, let's connect!
+ * Reactotron's connect() is non-blocking and will fail silently if the desktop app isn't running.
+ * The app will continue to work normally even if Reactotron can't connect.
  */
 reactotron.connect()
