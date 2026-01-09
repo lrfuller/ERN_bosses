@@ -155,7 +155,7 @@ const GameItemsScreen: React.FC<GameScreenProps> = ({ bossInfo }) => {
     },
     {
       id: 2,
-      name: "Silver Mirrorshield",
+      name: "Silver Mirrorshield (medium shield)",
       image: silver_mirror,
       magic: 92,
       fire: 32,
@@ -165,7 +165,7 @@ const GameItemsScreen: React.FC<GameScreenProps> = ({ bossInfo }) => {
     },
     {
       id: 3,
-      name: "Albinauric Shield",
+      name: "Albinauric Shield (medium shield)",
       image: albinauric,
       magic: 64,
       fire: 41,
@@ -175,7 +175,7 @@ const GameItemsScreen: React.FC<GameScreenProps> = ({ bossInfo }) => {
     },
     {
       id: 4,
-      name: "Carian Knight's Shield",
+      name: "Carian Knight's Shield (medium shield)",
       image: carian,
       magic: 71,
       fire: 28,
@@ -325,7 +325,7 @@ const GameItemsScreen: React.FC<GameScreenProps> = ({ bossInfo }) => {
     },
     {
       id: 19,
-      name: "JellyFish Shield",
+      name: "JellyFish Shield (medium shield)",
       image: jellyfish,
       magic: 65,
       fire: 65,
