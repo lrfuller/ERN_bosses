@@ -142,7 +142,10 @@ interface GameScreenProps {
   filterByShieldName: string
 }
 
-const GameItemsScreen: React.FC<GameScreenProps> = ({ filterByAffinityType, filterByShieldName }) => {
+const GameItemsScreen: React.FC<GameScreenProps> = ({
+  filterByAffinityType,
+  filterByShieldName,
+}) => {
   const items: ItemData[] = [
     {
       id: 1,
@@ -438,11 +441,9 @@ const GameItemsScreen: React.FC<GameScreenProps> = ({ filterByAffinityType, filt
 
   const [sortedItems, setSortedItems] = useState(items)
 
-  useEffect(() => {
-    let newList = sortedItems
-
-    // modify ascending later?...
+  function sortByAffinity() {
     const ascending = true
+    const newList = items
 
     newList.sort((a, b) => {
       const valueA = a[filterByAffinityType.damageTypes]
@@ -452,12 +453,42 @@ const GameItemsScreen: React.FC<GameScreenProps> = ({ filterByAffinityType, filt
       if (valueA < valueB) return ascending ? 1 : -1
       return 0
     })
+    return newList
+  }
+
+  useEffect(() => {
+    const newList = sortByAffinity()
 
     setSortedItems(newList)
   }, [filterByAffinityType.id])
 
-  useEffect(()=>{
-    let newList = items.filter(shield => shield.name.toLocaleLowerCase().includes(filterByShieldName.toLocaleLowerCase()))
+  useEffect(() => {
+    // sorting by shield name
+    console.log(filterByShieldName)
+
+    if (filterByShieldName == "") {
+      const newList = sortByAffinity()
+      setSortedItems(newList)
+      return
+    }
+
+    let newList = items.filter((shield) =>
+      shield.name.toLocaleLowerCase().includes(filterByShieldName.toLocaleLowerCase()),
+    )
+
+
+
+    const shieldNameLower = filterByShieldName.toLocaleLowerCase()
+    newList.sort((a, b) => {
+      const nameA = a.name.toLocaleLowerCase()
+      const nameB = b.name.toLocaleLowerCase()
+
+      if (nameA.startsWith(shieldNameLower)) return -1
+      if (nameB.startsWith(shieldNameLower)) return 1
+
+      return 0
+    })
+
     setSortedItems(newList)
   }, [filterByShieldName])
 
