@@ -138,10 +138,11 @@ const ShieldCard: React.FC<ShieldCardProps> = ({ item }) => {
 }
 
 interface GameScreenProps {
-  bossInfo: bossTypes
+  filterByAffinityType: bossTypes
+  filterByShieldName: string
 }
 
-const GameItemsScreen: React.FC<GameScreenProps> = ({ bossInfo }) => {
+const GameItemsScreen: React.FC<GameScreenProps> = ({ filterByAffinityType, filterByShieldName }) => {
   const items: ItemData[] = [
     {
       id: 1,
@@ -444,8 +445,8 @@ const GameItemsScreen: React.FC<GameScreenProps> = ({ bossInfo }) => {
     const ascending = true
 
     newList.sort((a, b) => {
-      const valueA = a[bossInfo.damageTypes]
-      const valueB = b[bossInfo.damageTypes]
+      const valueA = a[filterByAffinityType.damageTypes]
+      const valueB = b[filterByAffinityType.damageTypes]
 
       if (valueA > valueB) return ascending ? -1 : 1
       if (valueA < valueB) return ascending ? 1 : -1
@@ -453,7 +454,12 @@ const GameItemsScreen: React.FC<GameScreenProps> = ({ bossInfo }) => {
     })
 
     setSortedItems(newList)
-  }, [bossInfo.id])
+  }, [filterByAffinityType.id])
+
+  useEffect(()=>{
+    let newList = items.filter(shield => shield.name.toLocaleLowerCase().includes(filterByShieldName.toLocaleLowerCase()))
+    setSortedItems(newList)
+  }, [filterByShieldName])
 
   return (
     <View style={styles.container}>

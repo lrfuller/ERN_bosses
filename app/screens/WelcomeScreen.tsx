@@ -1,6 +1,7 @@
 import React, { FC, useCallback, useEffect, useState } from "react"
 import {
   ImageStyle,
+  StyleProp,
   TextInput,
   TextStyle,
   useWindowDimensions,
@@ -19,6 +20,8 @@ import { BossAffinities, elementalDamage } from "types/bossTypes"
 // import BossesCaoursel from "@/components/Bosses"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
+import { Icon } from "@/components/Icon"
+import { colors } from "@/theme/colors"
 
 export const WelcomeScreen: FC = function WelcomeScreen() {
   const { themed, theme } = useAppTheme()
@@ -26,7 +29,8 @@ export const WelcomeScreen: FC = function WelcomeScreen() {
   const { height, width } = useWindowDimensions()
 
   const [currentAffinity, setCurrentAffinity] = useState(BossAffinities[0])
-  const [affinityThreshold, setAffinityThreshold] = useState("0")
+  // const [affinityThreshold, setAffinityThreshold] = useState("0")
+  const [shieldName, setShieldName] = useState("")
 
   const dropdownOptions = BossAffinities.map((boss) => boss.damageTypes)
 
@@ -48,7 +52,7 @@ export const WelcomeScreen: FC = function WelcomeScreen() {
     <Screen preset="fixed" contentContainerStyle={$styles.flex1}>
       <View style={themed($topContainer)}>
         <View style={themed($filterContainer)}>
-          <Text>Affinity type</Text>
+          <Text style={$filterText}>Affinity Type</Text>
           <Dropdown
             options={dropdownOptions}
             value={currentAffinity.damageTypes}
@@ -65,9 +69,29 @@ export const WelcomeScreen: FC = function WelcomeScreen() {
             value={affinityThreshold}
           ></TextField>
         </View> */}
+        <View style={themed($filterContainer)}>
+          <Text style={$filterText}>Shield Name</Text>
+          <TextField
+            keyboardType="default"
+            placeholder="Greatshield..."
+            onChangeText={setShieldName}
+            value={shieldName}
+            RightAccessory={(props) =>
+                <Icon
+                  icon="x"
+                  containerStyle={$inputCross}
+                  color={shieldName !== "" ? colors.textDim : colors.text}
+                  onTouchEnd={() => setShieldName("")}
+                />
+            }
+          ></TextField>
+        </View>
       </View>
       <View style={themed($shieldContainer)}>
-        <GameItemsScreen bossInfo={BossAffinities[currentAffinity.id]} />
+        <GameItemsScreen
+          filterByAffinityType={BossAffinities[currentAffinity.id]}
+          filterByShieldName={shieldName}
+        />
       </View>
       {/* <BossesCaoursel
         currentIndex={currentIndex}
@@ -97,9 +121,21 @@ const $shieldContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
 })
 
 const $filterContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
-  paddingHorizontal: spacing.lg,
+  paddingHorizontal: spacing.sm,
   // paddingVertical: spacing.sm,
-  justifyContent: 'flex-end',
+  justifyContent: "flex-end",
   // width: "50%",
-  width: "100%"
+  width: "50%",
 })
+
+const $inputCross: StyleProp<ViewStyle> = {
+  height: 10,
+  width: 10,
+  marginRight: 20,
+  marginVertical: "auto",
+  justifyContent: "center",
+}
+
+const $filterText: StyleProp<TextStyle> = {
+  textAlign: "center"
+}
