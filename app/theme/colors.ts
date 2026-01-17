@@ -38,6 +38,7 @@ const palette = {
   cardBackground2: "#1e293b",
 
   guard: "#FFFFFF",
+  active: "#0ea5e9", // Sky-500 - vibrant blue for active/selected states
 } as const
 
 export const colors = {
@@ -87,4 +88,8 @@ export const colors = {
    * Error Background.
    */
   errorBackground: palette.angry100,
+  /**
+   * Active/Selected state color.
+   */
+  active: palette.active,
 } as const

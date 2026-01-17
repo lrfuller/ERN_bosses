@@ -1,12 +1,14 @@
 import { ComponentType, forwardRef, Ref, useImperativeHandle, useRef } from "react"
 import {
   ImageStyle,
+  Keyboard,
   StyleProp,
   // eslint-disable-next-line no-restricted-imports
   TextInput,
   TextInputProps,
   TextStyle,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
   ViewStyle,
 } from "react-native"
@@ -177,7 +179,7 @@ export const TextField = forwardRef(function TextField(props: TextFieldProps, re
    */
   function focusInput() {
     if (disabled) return
-
+    Keyboard.dismiss
     input.current?.focus()
   }
 
@@ -210,17 +212,17 @@ export const TextField = forwardRef(function TextField(props: TextFieldProps, re
             multiline={TextInputProps.multiline ?? false}
           />
         )}
-
-        <TextInput
-          ref={input}
-          underlineColorAndroid={colors.transparent}
-          textAlignVertical="top"
-          placeholder={placeholderContent}
-          placeholderTextColor={colors.textDim}
-          {...TextInputProps}
-          editable={!disabled}
-          style={themed($inputStyles)}
-        />
+          
+            <TextInput
+              ref={input}
+              underlineColorAndroid={colors.transparent}
+              textAlignVertical="top"
+              placeholder={placeholderContent}
+              placeholderTextColor={colors.textDim}
+              {...TextInputProps}
+              editable={!disabled}
+              style={themed($inputStyles)}
+            />
 
         {!!RightAccessory && (
           <RightAccessory

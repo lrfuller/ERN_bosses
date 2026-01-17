@@ -38,6 +38,7 @@ const palette = {
   cardBackground2: "#0f3460",
 
   guard: "#94a3b8",
+  active: "#06b6d4", // Cyan-500 - vibrant cyan for active/selected states in dark theme
 } as const
 
 export const colors = {
@@ -52,4 +53,8 @@ export const colors = {
   separator: palette.neutral300,
   error: palette.angry500,
   errorBackground: palette.angry100,
+  /**
+   * Active/Selected state color.
+   */
+  active: palette.active,
 } as const

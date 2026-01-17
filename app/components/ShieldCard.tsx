@@ -1,11 +1,20 @@
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useRef, useState } from "react"
 import { View, Text, StyleSheet, Image } from "react-native"
-import { Shield } from "lucide-react-native"
+import { Minus, Plus, Shield } from "lucide-react-native"
 import { FlashList } from "@shopify/flash-list"
 import { bossTypes } from "types/bossTypes"
-import { Text as SVGText } from "react-native-svg"
+import Svg, { Line, Text as SVGText } from "react-native-svg"
 import { colors } from "@/theme/colors"
 import { useAppTheme } from "@/theme/context"
+import { Button } from "./Button"
+import Animated, {
+  Easing,
+  useAnimatedProps,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated"
+import { AllShields, ShieldData } from "types/shields"
 
 // Affinities
 const magic = require("../../assets/images/affinities/magic.webp")
@@ -13,53 +22,12 @@ const fire = require("../../assets/images/affinities/fire.webp")
 const lightning = require("../../assets/images/affinities/lightning.webp")
 const holy = require("../../assets/images/affinities/holy.webp")
 
-// shields
-const ant = require("../../assets/images/greatshields/ants_skull_plate_elden_ring_wiki_guide_200px.png")
-const albinauric = require("../../assets/images/greatshields/Albinauric_Shield.webp")
-const briar = require("../../assets/images/greatshields/briar_greatshield_elden_ring_wiki_guide_200px.png")
-const carian = require("../../assets/images/greatshields/Carian_Knight_Shield.webp")
-const crossed_tree = require("../../assets/images/greatshields/crossed-tree_towershield_greatshield_elden_ring_wiki_guide_200px.png")
-const crucible_horn = require("../../assets/images/greatshields/crucible_hornshield_elden_ring_wiki_guide_200px.png")
-const cuckoo = require("../../assets/images/greatshields/cuckoo_greatshield_elden_ring_wiki_guide_200px.png")
-const distinguished = require("../../assets/images/greatshields/distinguished_greatshield_shields_elden_ring_wiki_guide_200px.png")
-const eclipse_crest = require("../../assets/images/greatshields/eclipse_crest_greatshield_elden_ring_wiki_guide_200px.png")
-const dragonclaw = require("../../assets/images/greatshields/dragonclaw__shield_elden_ring_wiki_guide_200px.png")
-const erdtree = require("../../assets/images/greatshields/erdtree_greatshield_elden_ring_wiki_guide_200px.png")
-const fingerprint = require("../../assets/images/greatshields/fingerprint_stone_shield_greatshield_elden_ring_wiki_guide_200px.png")
-const guardian = require("../../assets/images/greatshields/guardians_greatshiweapon_elden_ring_nightreign_wiki_guide.png")
-const gilded = require("../../assets/images/greatshields/gilded_greatshield_elden_ring_wiki_guide_200px.png")
-const golden_beast_crest = require("../../assets/images/greatshields/golden_beast_crest_shield_elden_ring_wiki_guide_200px.png")
-const golden = require("../../assets/images/greatshields/golden_greatshield_elden_ring_wiki_guide_200px.png")
-const haligtree_crest = require("../../assets/images/greatshields/haligtree_crest_greatshield_elden_ring_wiki_guide_200px.png")
-const icon_shield = require("../../assets/images/greatshields/icon_shield_elden_ring_wiki_guide_200px.png")
-const jellyfish = require("../../assets/images/greatshields/jellyfish_shield_elden_ring_wiki_guide_200.png")
-const one_eyed = require("../../assets/images/greatshields/one-eyed_shield_elden_ring_wiki_guide_200px.png")
-const visage = require("../../assets/images/greatshields/visage_shield_elden_ring_wiki_guide_200px.png")
-const wooden = require("../../assets/images/greatshields/wooden_greatshield_elden_ring_wiki_guide_200px.png")
-const spiked_palisade = require("../../assets/images/greatshields/spiked_palisade_shield_elden_ring_wiki_guide_200px.png")
-const redmane = require("../../assets/images/greatshields/redmane_greatshield_elden_ring_wiki_guide_200px.png")
-const dragon_tower = require("../../assets/images/greatshields/dragon_towershield_greatshield_elden_ring_wiki_guide_200px.png")
-const inverted_hawk = require("../../assets/images/greatshields/invert_hawk_towershield_greatshield_elden_ring_wiki_guide_200px.png")
-const manor_tower = require("../../assets/images/greatshields/manor_towershield_greatshield_elden_ring_wiki_guide_200px.png")
-const lordsworns = require("../../assets/images/greatshields/lordsworns_shield_greatshield_elden_ring_wiki_guide_200px.png")
-const silver_mirror = require("../../assets/images/greatshields/Silver_Mirrorshield.webp")
-
-interface ItemData {
-  id: number
-  name: string
-  image: any
-  lightning: number
-  fire: number
-  magic: number
-  holy: number
-  guard: number
-}
-
 interface ShieldCardProps {
-  item: ItemData
+  item: ShieldData
+  hideItemById: any
 }
 
-const ShieldCard: React.FC<ShieldCardProps> = ({ item }) => {
+const ShieldCard: React.FC<ShieldCardProps> = ({ item, hideItemById }) => {
   const { theme } = useAppTheme()
   const getResistanceColor = (value: number): string => {
     if (value >= 70) return "#22c55e"
@@ -71,12 +39,70 @@ const ShieldCard: React.FC<ShieldCardProps> = ({ item }) => {
   }
 
   const size = 45
-  const center = size / 2
+
+  const toggleShieldEvent = () => {
+    setToggleShield((prev) => {
+      hideItemById(item.id)
+      // console.log(`id ${item.id} state: ${item.hideItem}`)
+      return !prev
+    })
+  }
+
+  const [toggleShield, setToggleShield] = useState(item.hideItem)
+
+  const progress = useSharedValue(0)
+
+  useEffect(() => {
+    progress.value = withTiming(toggleShield ? 1 : 0, {
+      duration: 200,
+      easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+    })
+  }, [toggleShield])
+
+  const verticalStyle = useAnimatedStyle(() => ({
+    transform: [{ scaleY: 1 - progress.value }],
+    // opacity: 1 - progress.value,
+  }))
+
+  // Use the theme's active color which adapts to light/dark themes
+  const activeShieldStyle = toggleShield ? { backgroundColor: theme.colors.active } : null
 
   return (
     <View style={styles.card}>
       <View style={styles.title}>
         <Text style={styles.itemName}>{item.name}</Text>
+        <Button
+          style={[styles.itemCompare, activeShieldStyle]}
+          pressedStyle={styles.itemComparePressed}
+          onPress={toggleShieldEvent}
+        >
+          <View style={{ width: 14, height: 14, justifyContent: "center", alignItems: "center" }}>
+            {/* Horizontal line - always visible */}
+            <View
+              style={{
+                width: 14,
+                height: 2.5,
+                backgroundColor: "white",
+                borderRadius: 1.25,
+                position: "absolute",
+              }}
+            />
+
+            {/* Vertical line - collapses */}
+            <Animated.View
+              style={[
+                {
+                  width: 2.5,
+                  height: 14,
+                  backgroundColor: "white",
+                  borderRadius: 1.25,
+                  position: "absolute",
+                },
+                verticalStyle,
+              ]}
+            />
+          </View>
+        </Button>
       </View>
       <View style={styles.content}>
         <View style={styles.iconContainer}>
@@ -118,7 +144,7 @@ const ShieldCard: React.FC<ShieldCardProps> = ({ item }) => {
         </View>
 
         <View style={styles.guardBadge}>
-          {/* <Text style={styles.guardLabel}>Guard</Text> */}
+          <Text style={styles.guardLabel}>Guard</Text>
           <Shield size={size} color={theme.colors.palette.guard} strokeWidth={1.5}>
             <SVGText
               x={12.5}
@@ -132,318 +158,51 @@ const ShieldCard: React.FC<ShieldCardProps> = ({ item }) => {
             </SVGText>
           </Shield>
         </View>
+
+        {item.size == "M" ? (
+          <View style={styles.guardBadge}>
+            <Text style={styles.guardLabel}>Size</Text>
+            <Shield size={size} color={theme.colors.palette.guard} strokeWidth={1.5}>
+              <SVGText
+                x={12.5}
+                y={15}
+                textAnchor="middle"
+                fontSize={8}
+                fontWeight={100}
+                strokeWidth={1}
+              >
+                {item.size}
+              </SVGText>
+            </Shield>
+          </View>
+        ) : null}
       </View>
     </View>
   )
 }
 
 interface GameScreenProps {
-  filterByAffinityType: bossTypes
-  filterByShieldName: string
+  filterByAffinityType?: bossTypes
+  filterByShieldName?: string
+  updateCompareList?: any
+  newList?: Array<any>
 }
 
 const GameItemsScreen: React.FC<GameScreenProps> = ({
+  // 2 scenarios.
+  // 1: use affinityType and ShieldName
   filterByAffinityType,
   filterByShieldName,
+  // 2: use updateCompare list to update values added to a smaller list above the total shieldData list
+  updateCompareList,
+  newList
 }) => {
-  const items: ItemData[] = [
-    {
-      id: 1,
-      name: "Guardian's Greatshield",
-      image: guardian,
-      magic: 59,
-      fire: 66,
-      lightning: 53,
-      holy: 62,
-      guard: 80,
-    },
-    {
-      id: 2,
-      name: "Silver Mirrorshield (medium shield)",
-      image: silver_mirror,
-      magic: 92,
-      fire: 32,
-      lightning: 20,
-      holy: 28,
-      guard: 76,
-    },
-    {
-      id: 3,
-      name: "Albinauric Shield (medium shield)",
-      image: albinauric,
-      magic: 64,
-      fire: 41,
-      lightning: 22,
-      holy: 45,
-      guard: 75,
-    },
-    {
-      id: 4,
-      name: "Carian Knight's Shield (medium shield)",
-      image: carian,
-      magic: 71,
-      fire: 28,
-      lightning: 19,
-      holy: 54,
-      guard: 74,
-    },
-    {
-      id: 5,
-      name: "Ant's Skull Plate",
-      image: ant,
-      magic: 64,
-      fire: 48,
-      lightning: 64,
-      holy: 64,
-      guard: 78,
-    },
-    {
-      id: 6,
-      name: "Briar Greatshield",
-      image: briar,
-      magic: 62,
-      fire: 54,
-      lightning: 62,
-      holy: 62,
-      guard: 78,
-    },
-    {
-      id: 7,
-      name: "Distinguished Greatshield",
-      image: distinguished,
-      magic: 64,
-      fire: 62,
-      lightning: 54,
-      holy: 60,
-      guard: 80,
-    },
-    {
-      id: 8,
-      name: "Crucible Hornshield",
-      image: crucible_horn,
-      magic: 58,
-      fire: 57,
-      lightning: 52,
-      holy: 73,
-      guard: 81,
-    },
-    {
-      id: 9,
-      name: "Cuckoo Greatshield",
-      image: cuckoo,
-      magic: 71,
-      fire: 56,
-      lightning: 52,
-      holy: 61,
-      guard: 80,
-    },
-    {
-      id: 10,
-      name: "Eclipse Crest Greatshield",
-      image: eclipse_crest,
-      magic: 73,
-      fire: 57,
-      lightning: 51,
-      holy: 59,
-      guard: 81,
-    },
-    {
-      id: 11,
-      name: "Dragonclaw Shield",
-      image: dragonclaw,
-      magic: 55,
-      fire: 55,
-      lightning: 80,
-      holy: 50,
-      guard: 80,
-    },
-    {
-      id: 12,
-      name: "Erdtree Greatshield",
-      image: erdtree,
-      magic: 67,
-      fire: 50,
-      lightning: 46,
-      holy: 77,
-      guard: 81,
-    },
-    {
-      id: 13,
-      name: "Fingerprint Stone Shield",
-      image: fingerprint,
-      magic: 59,
-      fire: 62,
-      lightning: 61,
-      holy: 58,
-      guard: 82,
-    },
-    {
-      id: 14,
-      name: "Gilded Greatshield",
-      image: gilded,
-      magic: 59,
-      fire: 65,
-      lightning: 52,
-      holy: 64,
-      guard: 82,
-    },
-    {
-      id: 15,
-      name: "Golden Beast Crest Shield",
-      image: golden_beast_crest,
-      magic: 62,
-      fire: 62,
-      lightning: 54,
-      holy: 62,
-      guard: 79,
-    },
-    {
-      id: 16,
-      name: "Golden Greatshield",
-      image: golden,
-      magic: 57,
-      fire: 60,
-      lightning: 57,
-      holy: 66,
-      guard: 83,
-    },
-    {
-      id: 17,
-      name: "Haligtree Crest Greatshield",
-      image: haligtree_crest,
-      magic: 56,
-      fire: 61,
-      lightning: 50,
-      holy: 73,
-      guard: 80,
-    },
-    {
-      id: 18,
-      name: "Icon Shield",
-      image: icon_shield,
-      magic: 61,
-      fire: 56,
-      lightning: 63,
-      holy: 60,
-      guard: 81,
-    },
-    {
-      id: 19,
-      name: "JellyFish Shield (medium shield)",
-      image: jellyfish,
-      magic: 65,
-      fire: 65,
-      lightning: 50,
-      holy: 60,
-      guard: 78,
-    },
-    {
-      id: 20,
-      name: "One-Eyed Shield",
-      image: one_eyed,
-      magic: 55,
-      fire: 67,
-      lightning: 57,
-      holy: 61,
-      guard: 80,
-    },
-    {
-      id: 21,
-      name: "Visage Shield",
-      image: visage,
-      magic: 55,
-      fire: 72,
-      lightning: 58,
-      holy: 55,
-      guard: 79,
-    },
-    {
-      id: 22,
-      name: "Wooden Greatshield",
-      image: wooden,
-      magic: 63,
-      fire: 52,
-      lightning: 65,
-      holy: 60,
-      guard: 77,
-    },
-    {
-      id: 23,
-      name: "Spiked Palisade Shield",
-      image: spiked_palisade,
-      magic: 61,
-      fire: 54,
-      lightning: 65,
-      holy: 60,
-      guard: 77,
-    },
-    {
-      id: 24,
-      name: "Redmane Greatshield",
-      image: redmane,
-      magic: 57,
-      fire: 73,
-      lightning: 56,
-      holy: 54,
-      guard: 79,
-    },
-    {
-      id: 25,
-      name: "Crossed-Tree Towershield",
-      image: crossed_tree,
-      magic: 56,
-      fire: 66,
-      lightning: 52,
-      holy: 66,
-      guard: 82,
-    },
-    {
-      id: 26,
-      name: "Dragon Towershield",
-      image: dragon_tower,
-      magic: 59,
-      fire: 66,
-      lightning: 53,
-      holy: 62,
-      guard: 83,
-    },
-    {
-      id: 27,
-      name: "Inverted Hawk Towershield",
-      image: inverted_hawk,
-      magic: 65,
-      fire: 56,
-      lightning: 54,
-      holy: 65,
-      guard: 80,
-    },
-    {
-      id: 28,
-      name: "Manor Towershield",
-      image: manor_tower,
-      magic: 66,
-      fire: 66,
-      lightning: 52,
-      holy: 56,
-      guard: 81,
-    },
-    {
-      id: 29,
-      name: "Lordsworn's Shield",
-      image: lordsworns,
-      magic: 62,
-      fire: 52,
-      lightning: 63,
-      holy: 63,
-      guard: 79,
-    },
-  ]
 
-  const [sortedItems, setSortedItems] = useState(items)
+  const [sortedItems, setSortedItems] = useState(AllShields)
 
   function sortByAffinity() {
     const ascending = true
-    const newList = items
+    const newList = AllShields
 
     newList.sort((a, b) => {
       const valueA = a[filterByAffinityType.damageTypes]
@@ -464,19 +223,15 @@ const GameItemsScreen: React.FC<GameScreenProps> = ({
 
   useEffect(() => {
     // sorting by shield name
-    console.log(filterByShieldName)
-
     if (filterByShieldName == "") {
       const newList = sortByAffinity()
       setSortedItems(newList)
       return
     }
 
-    let newList = items.filter((shield) =>
+    let newList = AllShields.filter((shield) =>
       shield.name.toLocaleLowerCase().includes(filterByShieldName.toLocaleLowerCase()),
     )
-
-
 
     const shieldNameLower = filterByShieldName.toLocaleLowerCase()
     newList.sort((a, b) => {
@@ -492,6 +247,37 @@ const GameItemsScreen: React.FC<GameScreenProps> = ({
     setSortedItems(newList)
   }, [filterByShieldName])
 
+  // TODO fix.
+  const parentHideItemById = useCallback((id: number) =>{
+    setSortedItems(prevItems => {
+      const newItems = prevItems.map(item => 
+        item.id === id 
+          ? { ...item, hideItem: !item.hideItem }
+          : item
+      )
+
+      updateCompareList(newItems.filter(item => item.hideItem))
+      return newItems
+    }
+      
+    );
+
+    // const updatedItems = sortedItems.map((item, index)=> 
+    // item.id === id
+    //   ? {...item, hideItem: !item.hideItem}
+    //   : item
+    // )
+
+    // setSortedItems(updatedItems)
+    // updateCompareList(sortedItems.filter(item => item.hideItem))
+  }, [])
+
+  useEffect(()=>{
+    // const hiddenItems = sortedItems.filter(item => item.hideItem)
+    // console.log(sortedItems)
+    // updateCompareList(hiddenItems)
+  },[sortedItems])
+
   return (
     <View style={styles.container}>
       <FlashList
@@ -500,7 +286,8 @@ const GameItemsScreen: React.FC<GameScreenProps> = ({
         contentContainerStyle={styles.flashListContent}
         renderItem={({ item }) => (
           <View style={styles.cardWrapper}>
-            <ShieldCard key={item.id} item={item} />
+              {/* <Text style={{color: "white"}}>{item.hideItem == true ? "hide" : "show"}</Text> */}
+            <ShieldCard key={item.id} item={item} hideItemById={parentHideItemById}/>
           </View>
         )}
       />
@@ -525,11 +312,15 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   title: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     textAlign: "center",
     fontSize: 32,
     fontWeight: "bold",
     color: "#ffffff",
-    marginBottom: 4,
+    marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
@@ -560,6 +351,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 16,
+    gap: 6,
   },
   iconContainer: {
     width: 70,
@@ -576,19 +368,47 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   itemName: {
-    textAlign: "center",
+    textAlign: "left",
     fontSize: 18,
     fontWeight: "600",
     color: "#ffffff",
     flex: 1,
+    marginRight: 8,
+  },
+  itemName2: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#ffffff",
+  },
+  itemCompare: {
+    backgroundColor: colors.palette.cardBackground2,
+    borderRadius: 6,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    minHeight: 32,
+    // width: 160,
+    justifyContent: "center",
+    alignItems: "center",
+    flexShrink: 0,
+  },
+  itemComparePressed: {
+    backgroundColor: "#475569",
+    opacity: 0.9,
+  },
+  compareButtonContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
   },
   guardLabel: {
-    fontSize: 10,
+    fontSize: 14,
     color: colors.palette.guard,
-    marginBottom: 2,
+    // marginBottom: 2,
   },
   guardBadge: {
-    paddingHorizontal: 6,
+    alignItems: "center",
+    flexShrink: 0,
     width: 50,
   },
   resistanceImage: {
@@ -596,12 +416,13 @@ const styles = StyleSheet.create({
     height: 20,
   },
   resistancesContainer: {
-    flex: 1,
+    width: 160,
     gap: 6,
+    flexShrink: 0,
   },
   resistanceRow: {
     flexDirection: "row",
-    height: 30,
+    height: 32,
     gap: 6,
   },
   resistance: {

@@ -48,6 +48,11 @@ export const WelcomeScreen: FC = function WelcomeScreen() {
   //   }
   // }, [])
 
+  const updateCompareList = (value: any) => {
+    console.log(value)
+
+  }
+
   return (
     <Screen preset="fixed" contentContainerStyle={$styles.flex1}>
       <View style={themed($topContainer)}>
@@ -87,10 +92,19 @@ export const WelcomeScreen: FC = function WelcomeScreen() {
           ></TextField>
         </View>
       </View>
+
+{/* TODO create the second view */}
+      {/* <View style={themed($shieldContainer)}>
+        <GameItemsScreen
+          newList={}
+        />
+      </View> */}
+
       <View style={themed($shieldContainer)}>
         <GameItemsScreen
           filterByAffinityType={BossAffinities[currentAffinity.id]}
           filterByShieldName={shieldName}
+          updateCompareList={updateCompareList}
         />
       </View>
       {/* <BossesCaoursel
